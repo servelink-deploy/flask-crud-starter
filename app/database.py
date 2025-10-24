@@ -25,7 +25,10 @@ class Database:
         with Database.get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS users (
+                DROP TABLE IF EXISTS users CASCADE
+            ''')
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS users_flask (
                     id SERIAL PRIMARY KEY,
                     name VARCHAR(255) NOT NULL,
                     email VARCHAR(255) UNIQUE NOT NULL,
@@ -35,6 +38,6 @@ class Database:
                 )
             ''')
             cursor.execute('''
-                CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)
+                CREATE INDEX IF NOT EXISTS idx_users_flask_email ON users_flask(email)
             ''')
             cursor.close()

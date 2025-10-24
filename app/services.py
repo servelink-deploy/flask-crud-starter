@@ -9,7 +9,7 @@ class UserService:
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute(
                 '''
-                INSERT INTO users (name, email, phone)
+                INSERT INTO users_flask (name, email, phone)
                 VALUES (%s, %s, %s)
                 RETURNING id, name, email, phone, created_at, updated_at
                 ''',
@@ -26,7 +26,7 @@ class UserService:
             cursor.execute(
                 '''
                 SELECT id, name, email, phone, created_at, updated_at 
-                FROM users 
+                FROM users_flask 
                 ORDER BY id DESC 
                 LIMIT %s OFFSET %s
                 ''',
@@ -34,7 +34,7 @@ class UserService:
             )
             results = cursor.fetchall()
             
-            cursor.execute('SELECT COUNT(*) as total FROM users')
+            cursor.execute('SELECT COUNT(*) as total FROM users_flask')
             total = cursor.fetchone()['total']
             
             cursor.close()
@@ -50,7 +50,7 @@ class UserService:
         with Database.get_connection() as conn:
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute(
-                'SELECT id, name, email, phone, created_at, updated_at FROM users WHERE id = %s',
+                'SELECT id, name, email, phone, created_at, updated_at FROM users_flask WHERE id = %s',
                 (user_id,)
             )
             result = cursor.fetchone()
@@ -65,7 +65,7 @@ class UserService:
             cursor.execute(
                 '''
                 SELECT id, name, email, phone, created_at, updated_at 
-                FROM users 
+                FROM users_flask 
                 WHERE name ILIKE %s OR email ILIKE %s
                 ORDER BY id DESC
                 LIMIT 50
@@ -102,7 +102,7 @@ class UserService:
         with Database.get_connection() as conn:
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             query = f'''
-                UPDATE users
+                UPDATE users_flask
                 SET {', '.join(update_fields)}
                 WHERE id = %s
                 RETURNING id, name, email, phone, created_at, updated_at
@@ -116,7 +116,7 @@ class UserService:
     def delete_user(user_id: int):
         with Database.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('DELETE FROM users WHERE id = %s RETURNING id', (user_id,))
+            cursor.execute('DELETE FROM users_flask WHERE id = %s RETURNING id', (user_id,))
             result = cursor.fetchone()
             cursor.close()
             return result is not None
